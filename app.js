@@ -5,7 +5,7 @@ const ejs = require('ejs');
 const path = require('path')
 
 // Globals
-const port = 8000;
+const PORT = process.env.PORT || 80;
 
 
 
@@ -16,6 +16,6 @@ app.get('/', (req, res) => {
     res.render("index.ejs")
 })
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`)
 })
