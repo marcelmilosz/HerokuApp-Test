@@ -1,0 +1,26 @@
+<%- include("../includes/header.ejs") %>
+
+
+<div class="container is-fluid login-container">
+
+    <div class="login-box">
+
+        <div class="login-info">
+            <p class="login-title"> Log in </p>
+            <p> Don't have an account? <br> <a href=""> Sign In </a> </p>
+        </div>
+        <div class="login-form">
+            <form action="/login" method="POST">
+                <input class="input-form" type="text" name="username" placeholder="Username / E-mail"> <br>
+                <input class="input-form" type="password" name="password" placeholder="Password"> <br>
+                <button class="basic-button"> Continue </button>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+<%- include("../includes/footer.ejs") %>
