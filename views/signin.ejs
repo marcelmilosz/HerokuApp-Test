@@ -1,0 +1,36 @@
+<%- include("../includes/header.ejs") %>
+
+
+<section class="section fullPage-container ">
+    <div class="container signin-container">
+        <div class="signin-box">
+            <div class="signin-info">
+                <h1 class="text-title"> Sign In </h1>
+                <p class="text-normal"> Already have an account?</p>
+                <a class="basic-link" href="/login"> Log in <i class="fa-solid fa-arrow-up-right-from-square"></i> </a>
+            </div>
+            <div class="signin-form">
+                <form>
+                    <p class="input-label"> <i class="fa-solid fa-user"></i> Username </p>
+                    <input class="input-form" type="text" name="username"> <br>
+
+                    <p class="input-label"> <i class="fa-solid fa-at"></i> E-mail </p>
+                    <input class="input-form" type="text" name="email"> <br>
+
+                    <p class="input-label"> <i class="fa-solid fa-unlock-keyhole"></i> Password </p>
+                    <input class="input-form" type="password" name="password"> <br>
+                    <button class="basic-button"> Register </button>
+                </form>
+
+            </div>
+            <div class="signin-form-error-box">
+                <p class="text-normal">
+                    <!-- User not found -->
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<%- include("../includes/footer.ejs") %>

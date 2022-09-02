@@ -195,6 +195,65 @@ body {
     color: var(--RedStrong);
 }
 
+/* Views - Sign In */
+
+.signin-container {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.signin-box {
+    width: 450px;
+    min-height: 400px;
+
+    background: rgb(51, 51, 67);
+    background: radial-gradient(circle at top left, #333343 0%, #222232 100%);
+
+    padding: 24px 48px;
+    border-radius: 12px;
+}
+
+.signin-info {
+    width: 100%;
+    min-height: 100px;
+
+    text-align: center;
+
+    padding-bottom: 24px;
+}
+
+.signin-form {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 24px;
+}
+
+.signin-form button {
+    width: 150px;
+
+    display: block;
+    margin: 0 auto;
+    margin-top: 24px;
+}
+
+.signin-form-error-box {
+    width: 100%;
+
+    border-radius: 4px;
+}
+
+.signin-form-error-box p {
+    font-size: 16px;
+
+    color: var(--RedStrong);
+}
+
 /* Footer */
 .footer-container {
     background-color: transparent;

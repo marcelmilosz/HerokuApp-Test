@@ -17,8 +17,14 @@ app.get('/', (req, res) => {
     res.render("index.ejs")
 })
 
+/* Login */
 app.get('/login', (req, res) => {
     res.render("login.ejs")
+})
+
+/* Sign In */
+app.get('/signin', (req, res) => {
+    res.render("signin.ejs")
 })
 
 app.listen(PORT, () => {
