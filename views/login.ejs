@@ -1,26 +1,33 @@
 <%- include("../includes/header.ejs") %>
 
 
-<div class="container is-fluid login-container">
+<section class="section fullPage-container ">
+    <div class="container login-container">
+        <div class="login-box">
+            <div class="login-info">
+                <h1 class="text-title"> Log In </h1>
+                <p class="text-normal"> Don't have an account?</p>
+                <a class="basic-link" href="/"> Sign Up <i class="fa-solid fa-arrow-up-right-from-square"></i> </a>
+            </div>
+            <div class="login-form">
+                <form>
+                    <p class="input-label"> <i class="fa-solid fa-user"></i> E-mail / Username </p>
+                    <input class="input-form" type="text" name="username"> <br>
 
-    <div class="login-box">
+                    <p class="input-label"> <i class="fa-solid fa-unlock-keyhole"></i> Password </p>
+                    <input class="input-form" type="password" name="password"> <br>
+                    <button class="basic-button"> Continue </button>
+                </form>
 
-        <div class="login-info">
-            <p class="login-title"> Log in </p>
-            <p> Don't have an account? <br> <a href=""> Sign In </a> </p>
+            </div>
+            <div class="login-form-error-box">
+                <p class="text-normal">
+                    <!-- User not found -->
+                </p>
+            </div>
         </div>
-        <div class="login-form">
-            <form action="/login" method="POST">
-                <input class="input-form" type="text" name="username" placeholder="Username / E-mail"> <br>
-                <input class="input-form" type="password" name="password" placeholder="Password"> <br>
-                <button class="basic-button"> Continue </button>
-
-            </form>
-        </div>
-
     </div>
-
-</div>
+</section>
 
 
 <%- include("../includes/footer.ejs") %>

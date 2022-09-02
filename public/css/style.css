@@ -3,53 +3,138 @@ body {
     width: 100%;
     height: 100%;
 
-    background-color: #FFF;
+    background-color: #111121;
 
-    font-family: 'Ubuntu', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-/* Globals */
-.input-form {
-    width: 100%;
+:root {
+    --BgBlackMain: #111121;
+    --BgBlackLighter: #222232;
 
-    font-size: 20px;
-    font-family: 'Ubuntu', sans-serif;
+    /* Colored text */
+    --Green: #81E6D9;
+    --GreenStronger: #9AE6B4;
+    --Red: #fb9898;
+    --RedStrong: #ff7272;
+    --Blue: #90CCF4;
+    --BlueLighter: #A1DDF5;
 
-    padding: 12px;
-
-    background-color: #FFF;
-
-    border: 0;
-    border: 1px solid #DDD;
-    border-radius: 4px;
+    /* White text */
+    --fontWhiteBig: #F7FAFC;
+    --fontWhiteNormal: #E2E8F0;
 }
 
-.basic-button {
-    width: 100%;
-
-    background-color: #773ef2;
-    color: #FFF;
-
-    font-size: 16px;
-    font-family: 'Ubuntu', sans-serif;
-    font-weight: 500;
-
-    padding: 12px;
-
-    border: 0;
-    border-radius: 4px;
-
-    transition: all 200ms;
-}
-
-.basic-button:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-}
 
 /* NavBar */
 .navbar {
-    box-shadow: 0px 1px 4px #DDD;
+    background-color: var(--BgBlackLighter);
+}
+
+.navbar-start {
+    gap: 0px;
+}
+
+.navbar-end {
+    gap: 0px;
+}
+
+.nav-logo {
+    width: 100%;
+}
+
+.navbar-item {
+    color: var(--fontWhiteBig);
+    font-weight: 500;
+}
+
+.navbar-link {
+    color: var(--fontWhiteBig);
+    font-weight: 500;
+}
+
+.signUpBtn {
+    color: var(--Blue);
+
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 900;
+
+    background-color: transparent;
+    border: 0;
+
+    padding: 0;
+    margin: 0;
+}
+
+.loginBtn {
+    color: var(--GreenStronger);
+
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 900;
+
+    background-color: transparent;
+    border: 0;
+}
+
+.navbar a {
+    transition: all 200ms;
+}
+
+.navbar a:hover {
+    color: var(--fontWhiteBig);
+    background-color: transparent;
+    transform: scale(1.1);
+}
+
+.navbar-dropdown {
+    background-color: var(--BgBlackLighter);
+    border: 0;
+}
+
+.nav-dropdown .navbar-link {
+    background-color: transparent !important;
+}
+
+.nav-dropdown .navbar-item {
+    color: var(--fontWhiteNormal);
+}
+
+.nav-dropdown .navbar-item i {
+    margin-right: 6px;
+}
+
+.navbar-dropdown .navbar-item:hover {
+    transform: scale(1.02);
+    cursor: pointer;
+    background-color: transparent !important;
+    color: var(--fontWhiteNormal) !important;
+}
+
+.navbar-burger span {
+    background-color: var(--fontWhiteBig);
+}
+
+.navbar-menu {
+    background-color: var(--BgBlackLighter);
+}
+
+.navbar-menu .navbar-start .navbar-item:hover {
+    cursor: pointer;
+    transform: none;
+    transform: scale(1.01);
+}
+
+.navbar-menu .navbar-end .navbar-link:hover {
+    cursor: pointer;
+    transform: none;
+    transform: scale(1.01);
+}
+
+/* Views - Index */
+.index-container {
+    background-color: transparent;
+    padding-left: 24px;
+    padding-right: 24px;
 }
 
 /* Login */
@@ -66,48 +151,55 @@ body {
 
 .login-box {
     width: 450px;
-    height: 500px;
+    min-height: 400px;
 
-    background-color: #FFF;
+    background: rgb(51, 51, 67);
+    background: radial-gradient(circle at top left, #333343 0%, #222232 100%);
 
-    box-shadow: 0px 2px 6px #CCC;
-
-    border-radius: 4px;
+    padding: 24px 48px;
+    border-radius: 12px;
 }
 
 .login-info {
     width: 100%;
-    height: 200px;
-
-    padding: 12px;
-
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    justify-content: center;
-    align-items: center;
+    min-height: 100px;
 
     text-align: center;
-}
 
-.login-title {
-    font-size: 56px;
-    font-weight: 500;
+    padding-bottom: 24px;
 }
 
 .login-form {
     width: 100%;
-    height: 300px;
-
-    padding-top: 24px;
-    padding-left: 48px;
-    padding-right: 48px;
-}
-
-.login-form input {
-    margin-bottom: 12px;
+    min-height: 100px;
+    margin-bottom: 24px;
 }
 
 .login-form button {
+    width: 150px;
+
+    display: block;
+    margin: 0 auto;
     margin-top: 24px;
+}
+
+.login-form-error-box {
+    width: 100%;
+
+    border-radius: 4px;
+}
+
+.login-form-error-box p {
+    font-size: 16px;
+
+    color: var(--RedStrong);
+}
+
+/* Footer */
+.footer-container {
+    background-color: transparent;
+    padding-left: 24px;
+    padding-right: 24px;
+
+    background-color: var(--BgBlackLighter);
 }
