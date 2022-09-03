@@ -3,6 +3,7 @@ const app = express();
 
 const ejs = require('ejs');
 const path = require('path')
+const secr = require("./secrets.json");
 
 // Globals
 const PORT = process.env.PORT || 80;
@@ -11,7 +12,7 @@ const PORT = process.env.PORT || 80;
 const User = require('./models/user.js');
 
 // DB 
-const uri = "mongodb+srv://marcelmilosz:2MqNkwVIGAVF6yJX@cluster0.gpbuj84.mongodb.net/memes?retryWrites=true&w=majority";
+const uri = secr.uri;
 var mongoDB = process.env.MONGODB_URI || uri;
 
 var mongoose = require('mongoose');
