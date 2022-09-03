@@ -12,17 +12,18 @@ const User = require('./models/user.js');
 
 // DB 
 const uri = "mongodb+srv://marcelmilosz:2MqNkwVIGAVF6yJX@cluster0.gpbuj84.mongodb.net/memes?retryWrites=true&w=majority";
+var mongoDB = process.env.MONGODB_URI || uri;
+
 var mongoose = require('mongoose');
 
-mongoose.connect(uri);
+mongoose.connect(mongoDB);
 
 // get reference to database
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.log("Connection Successful!");
-    console.log(User);
+    console.log("Connection with Mongo DB Successful!");
 });
 
 
