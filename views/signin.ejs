@@ -12,10 +12,20 @@
             <div class="signin-form">
                 <form action="/signin" method="POST">
                     <p class="input-label"> <i class="fa-solid fa-user"></i> Username </p>
-                    <input class="input-form" type="text" name="username"> <br>
+                    <% if(typeof(queries) !== 'undefined') { %>
+                    <input class="input-form" type="text" name="username" value="<%= queries.username %>">
+                    <% } else { %>
+                    <input class="input-form" type="text" name="username">
+                    <% } %>
+                    <br>
 
                     <p class="input-label"> <i class="fa-solid fa-at"></i> E-mail </p>
-                    <input class="input-form" type="text" name="email"> <br>
+                    <% if(typeof(queries) !== 'undefined') { %>
+                    <input class="input-form" type="text" name="email" value="<%= queries.email %>">
+                    <% } else { %>
+                    <input class="input-form" type="text" name="email">
+                    <% } %>
+                    <br>
 
                     <p class="input-label"> <i class="fa-solid fa-unlock-keyhole"></i> Password </p>
                     <input class="input-form" type="password" name="password"> <br>
@@ -64,6 +74,14 @@
 
                 <% if (queries.spaces) {  %>
                 <p class="text-error-normal"> - Password cannot have spaces </p>
+                <% } %>
+
+                <% if (queries.usernameExists) {  %>
+                <p class="text-error-normal"> - Username exists! </p>
+                <% } %>
+
+                <% if (queries.emailExists) {  %>
+                <p class="text-error-normal"> - Email was already used! </p>
                 <% } %>
 
                 <% } %>

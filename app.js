@@ -5,11 +5,19 @@ const ejs = require('ejs');
 const path = require('path');
 const url = require('url');
 
+const bcrypt = require("bcrypt");
+
 const validator = require("email-validator");
+
+const saltRounds = 10;
 
 const passwordValidator = require('password-validator');
 
 // Your website: https://hostapptest.herokuapp.com/
+
+// TO DO 
+// Zrobiłeś walidacje rejestracji, dodaj zeby sprawdzalo czy w bazie są juz takie dane 
+// ^ Sprawdz czy podany email to taki email
 
 // Globals
 const PORT = process.env.PORT || 80;
@@ -105,6 +113,9 @@ app.post('/signin', (req, res) => {
 
     let inputValidation = {}; // All errors are added here 
 
+    inputValidation["username"] = username;
+    inputValidation["email"] = email;
+
     console.log("Username validation: ", usernameValidation);
     console.log("Password validation: ", passwordValidation);
     console.log("Email validation: ", emailValidation);
@@ -128,17 +139,59 @@ app.post('/signin', (req, res) => {
         let newUser = {
             username: username,
             email: email,
-            password: password
+            password: password,
         }
 
-        User.create(newUser, function (err, response) {
-            if (err) {
-                res.redirect('/signin')
-                return handleError("Problem when adding user! ", err);
-            }
-            console.log("User added!", response)
-            res.redirect('/login?accountCreated=true');
-        });
+        let dbReturn = {}; // Stores if username or email exists
+
+        User.find({ username: username })
+            .then((users) => {
+                console.log(users);
+                if (users.length > 0) {
+                    // Username Exists!
+                    dbReturn['usernameExists'] = true;
+                }
+
+                User.find({ email: email })
+                    .then((emails) => {
+                        if (emails.length > 0) {
+                            // Email Exists
+                            dbReturn['emailExists'] = true;
+                        }
+
+                        let amoutOfErros = Object.keys(dbReturn).length;
+
+                        dbReturn['username'] = username;
+                        dbReturn['email'] = email;
+
+                        if (amoutOfErros > 0) {
+                            // Something is taken
+                            res.redirect(url.format({ pathname: "/signin", query: dbReturn }));
+                        }
+                        else {
+                            // U can sign in!
+                            bcrypt.hash(password, saltRounds)
+                                .then((hashedPassword) => {
+                                    newUser['password'] = hashedPassword;
+                                    User.create(newUser, function (err, response) {
+                                        if (err) {
+                                            res.redirect('/signin')
+                                            return handleError("Problem when adding user! ", err);
+                                        }
+                                        console.log("User added!", response)
+                                        res.redirect('/login?accountCreated=true');
+                                    });
+                                })
+
+                        }
+                    })
+
+
+            })
+            .catch((error) => {
+                console.log("Something went wrong when searching for users!\n", error);
+            })
+
     }
 })
 
