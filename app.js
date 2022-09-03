@@ -47,7 +47,7 @@ app.get('/login', (req, res) => {
 
 /* Sign In */
 app.get('/signin', (req, res) => {
-    res.render("signin.ejs", { a: mongoDB, b: PORT })
+    res.render("signin.ejs")
 })
 
 app.post('/signin', (req, res) => {
