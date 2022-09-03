@@ -11,8 +11,7 @@ const PORT = process.env.PORT || 80;
 const User = require('./models/user.js');
 
 // DB 
-// const uri = "mongodb+srv://marcelmilosz:2MqNkwVIGAVF6yJX@cluster0.gpbuj84.mongodb.net/memes?retryWrites=true&w=majority"
-var mongoDB = process.env.MONGO_URI;
+var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
 
 // var mongoose = require('mongoose');
 
