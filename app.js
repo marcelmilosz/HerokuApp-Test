@@ -2,8 +2,7 @@ const express = require('express');
 const app = express();
 
 const ejs = require('ejs');
-const path = require('path')
-const secr = require("./secrets.json");
+const path = require('path');
 
 // Globals
 const PORT = process.env.PORT || 80;
@@ -12,23 +11,23 @@ const PORT = process.env.PORT || 80;
 const User = require('./models/user.js');
 
 // DB 
-const uri = secr.uri;
-var mongoDB = process.env.MONGODB_URI || uri;
+// const uri = "mongodb+srv://marcelmilosz:2MqNkwVIGAVF6yJX@cluster0.gpbuj84.mongodb.net/memes?retryWrites=true&w=majority"
+var mongoDB = process.env.MONGO_URI;
 
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 
-mongoose.connect(mongoDB);
+// mongoose.connect(mongoDB);
 
-// get reference to database
-var db = mongoose.connection;
+// // get reference to database
+// var db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-    console.log("Connection with Mongo DB Successful!");
-});
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', function () {
+//     console.log("Connection with Mongo DB Successful!");
+// });
 
 
-// Your website: https://limitless-plateau-28047.herokuapp.com/
+// Your website: https://hostapptest.herokuapp.com/
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views'));
@@ -39,7 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.get('/', (req, res) => {
-    res.render("index.ejs")
+    res.render("index.ejs", { mongoKey: mongoDB })
 })
 
 /* Login */
