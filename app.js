@@ -5,7 +5,7 @@ const ejs = require('ejs');
 const path = require('path');
 const url = require('url');
 
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 
 const validator = require("email-validator");
 
@@ -170,7 +170,7 @@ app.post('/signin', (req, res) => {
                         }
                         else {
                             // U can sign in!
-                            bcrypt.hash(password, saltRounds)
+                            bcryptjs.hash(password, saltRounds)
                                 .then((hashedPassword) => {
                                     newUser['password'] = hashedPassword;
                                     User.create(newUser, function (err, response) {
