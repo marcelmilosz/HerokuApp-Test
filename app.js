@@ -65,12 +65,14 @@ app.post('/signin', (req, res) => {
     db.collection('users').insertOne(newUser)
         .then(() => {
             console.log("New user added!", newUser)
+            res.redirect('/');
         })
         .catch((err) => {
             console.log("Something went wrong when adding new user! Error msg: ", err);
+            res.redirect('/signin');
         })
 
-    res.redirect('/');
+
 })
 
 app.listen(PORT, () => {
