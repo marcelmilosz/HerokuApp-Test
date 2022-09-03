@@ -4,6 +4,8 @@ const app = express();
 const ejs = require('ejs');
 const path = require('path');
 
+// Your website: https://hostapptest.herokuapp.com/
+
 // Globals
 const PORT = process.env.PORT || 80;
 
@@ -13,20 +15,18 @@ const User = require('./models/user.js');
 // DB 
 var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
 
-// var mongoose = require('mongoose');
+var mongoose = require('mongoose');
 
-// mongoose.connect(mongoDB);
+mongoose.connect(mongoDB);
 
 // // get reference to database
-// var db = mongoose.connection;
+var db = mongoose.connection;
 
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', function () {
-//     console.log("Connection with Mongo DB Successful!");
-// });
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+    console.log("Connection with Mongo DB Successful!");
+});
 
-
-// Your website: https://hostapptest.herokuapp.com/
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views'));
