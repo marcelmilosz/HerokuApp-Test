@@ -24,9 +24,50 @@
 
             </div>
             <div class="signin-form-error-box">
-                <p class="text-normal">
-                    <!-- User not found -->
-                </p>
+                <!-- Password Validation -->
+                <% if (typeof(queries) !== 'undefined') { %>
+
+                <% if (queries.emailNotValid) {  %>
+                <p class="text-error-normal"> - Something is wrong with your e-mail </p>
+                <% } %>
+                <% if (queries.umin) {  %>
+                <p class="text-error-normal"> - Username should have a minimum length of 4 characters </p>
+                <% } %>
+
+                <% if (queries.umax) {  %>
+                <p class="text-error-normal"> - Username should have a maximum length of 20 characters </p>
+                <% } %>
+
+                <% if (queries.uspaces) {  %>
+                <p class="text-error-normal"> - Username cannot have spaces </p>
+                <% } %>
+
+                <% if (queries.min) {  %>
+                <p class="text-error-normal"> - Password should have a minimum length of 8 characters </p>
+                <% } %>
+
+                <% if (queries.max) {  %>
+                <p class="text-error-normal"> - Password should have a maximum length of 100 characters </p>
+                <% } %>
+
+                <% if (queries.uppercase) {  %>
+                <p class="text-error-normal"> - Password should have 1 or more uppercase characters </p>
+                <% } %>
+
+                <% if (queries.lowercase) {  %>
+                <p class="text-error-normal"> - Password should have 1 or more lowercase characters </p>
+                <% } %>
+
+                <% if (queries.digits) {  %>
+                <p class="text-error-normal"> - Password should have 2 or more digits </p>
+                <% } %>
+
+                <% if (queries.spaces) {  %>
+                <p class="text-error-normal"> - Password cannot have spaces </p>
+                <% } %>
+
+                <% } %>
+
             </div>
         </div>
     </div>

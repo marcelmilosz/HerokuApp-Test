@@ -22,9 +22,12 @@
 
             </div>
             <div class="login-form-error-box">
-                <p class="text-normal">
+                <p class="text-error-normal">
                     <!-- User not found -->
                 </p>
+                <% if (queries.accountCreated) { %>
+                <p class="text-success-normal">Account created succesfuly, you can login now :) </p>
+                <% } %>
             </div>
         </div>
     </div>

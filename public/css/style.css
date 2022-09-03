@@ -368,12 +368,6 @@ body {
     border-radius: 4px;
 }
 
-.login-form-error-box p {
-    font-size: 16px;
-
-    color: var(--RedStrong);
-}
-
 /* Views - Sign In */
 
 .signin-container {
@@ -424,12 +418,6 @@ body {
     width: 100%;
 
     border-radius: 4px;
-}
-
-.signin-form-error-box p {
-    font-size: 16px;
-
-    color: var(--RedStrong);
 }
 
 /* Footer */
