@@ -13,9 +13,9 @@ const PORT = process.env.PORT || 80;
 const User = require('./models/user.js');
 
 // DB 
-var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
-
 var mongoose = require('mongoose');
+
+var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
 
 mongoose.connect(mongoDB);
 
@@ -47,7 +47,7 @@ app.get('/login', (req, res) => {
 
 /* Sign In */
 app.get('/signin', (req, res) => {
-    res.render("signin.ejs")
+    res.render("signin.ejs", { a: mongoDB, b: PORT })
 })
 
 app.post('/signin', (req, res) => {
