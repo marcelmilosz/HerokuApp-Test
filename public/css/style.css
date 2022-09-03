@@ -299,7 +299,7 @@ body {
 }
 
 .post-reactions button {
-    min-width: 100px;
+    min-width: 50px;
     height: 40px;
 
     background-color: var(--BlueGray);
