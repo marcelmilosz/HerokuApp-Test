@@ -11,9 +11,14 @@
                 </a>
             </div>
             <div class="login-form">
-                <form>
+                <form action="/login" method="POST">
                     <p class="input-label"> <i class="fa-solid fa-user"></i> E-mail / Username </p>
-                    <input class="input-form" type="text" name="username"> <br>
+                    <% if(typeof(queries) !== 'undefined') { %>
+                    <input class="input-form" type="text" name="username" value="<%= queries.username %>">
+                    <% } else { %>
+                    <input class="input-form" type="text" name="username">
+                    <% } %>
+                    <br>
 
                     <p class="input-label"> <i class="fa-solid fa-unlock-keyhole"></i> Password </p>
                     <input class="input-form" type="password" name="password"> <br>
@@ -22,12 +27,23 @@
 
             </div>
             <div class="login-form-error-box">
-                <p class="text-error-normal">
-                    <!-- User not found -->
-                </p>
+
+                <!-- User Validation -->
+                <% if (typeof(queries) !== 'undefined') { %>
+
+                <% if (queries.userExists) { %>
+                <p class="text-error-normal"> Username / E-mail not found! </p>
+                <% } %>
+
+                <% if (queries.passwordOk) { %>
+                <p class="text-error-normal"> Wrong password! </p>
+                <% } %>
+
                 <% if (queries.accountCreated) { %>
-                <p class="text-success-normal">Account created succesfuly, you can now login <i
+                <p class="text-success-normal">Account created successfully, you can now login <i
                         class="fa-regular fa-face-smile-beam"></i> </p>
+                <% } %>
+
                 <% } %>
             </div>
         </div>

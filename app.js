@@ -50,6 +50,10 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.get('/', (req, res) => {
+
+    let queries = req.query;
+    console.log("Recived queries: ", queries);
+
     res.render("index.ejs")
 })
 
@@ -57,8 +61,50 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     let queries = req.query;
 
+    console.log("Recived queries: ", queries);
+
     res.render("login.ejs", { queries: queries });
+
 })
+
+app.post('/login', (req, res) => {
+
+    let username = req.body.username;
+    let password = req.body.password;
+
+    let possibleErrors = {};
+
+    possibleErrors["username"] = username; // For returning when user typed this
+
+
+    User.findOne({ $or: [{ username: username }, { email: username }] })
+        .then((user) => {
+            if (user !== null) {
+
+                // User exists (Thats good)
+                bcryptjs.compare(password, user.password, function (err, response) {
+                    if (err) {
+                        // handle error
+                    }
+                    if (response) {
+                        // Password matches (He can login now)
+                        res.redirect(url.format({ pathname: "/", query: { isValid: true } }));
+                    } else {
+                        // Password not match
+                        possibleErrors['passwordOk'] = false
+                        res.redirect(url.format({ pathname: "/login", query: possibleErrors }));
+                    }
+                });
+            }
+            else {
+                // User not exists
+                possibleErrors["userExists"] = false;
+                res.redirect(url.format({ pathname: "/login", query: possibleErrors }));
+            }
+        })
+})
+
+
 
 /* Sign In */
 app.get('/signin', (req, res) => {
@@ -113,6 +159,8 @@ app.post('/signin', (req, res) => {
 
     let inputValidation = {}; // All errors are added here 
 
+    let someErrorFound = false; // Helper 
+
     inputValidation["username"] = username;
     inputValidation["email"] = email;
 
@@ -124,75 +172,73 @@ app.post('/signin', (req, res) => {
         for (let i = 0; i < passwordValidation.length; i++) {
             inputValidation[passwordValidation[i]] = true;
         }
+
+        someErrorFound = true;
+    }
+
+    if (!emailValidation) {
+        inputValidation["emailNotValid"] = true;
+
+        someErrorFound = true;
+    }
+
+    if (usernameValidation.length > 0) {
         for (let i = 0; i < usernameValidation.length; i++) {
             inputValidation["u" + usernameValidation[i]] = true;
         }
-
-        if (!emailValidation) {
-            inputValidation["emailNotValid"] = true;
-        }
-
-        res.redirect(url.format({ pathname: "/signin", query: inputValidation }));
+        someErrorFound = true;
     }
-    else {
-
-        let newUser = {
-            username: username,
-            email: email,
-            password: password,
-        }
-
-        let dbReturn = {}; // Stores if username or email exists
-
-        User.find({ username: username })
-            .then((users) => {
-                console.log(users);
-                if (users.length > 0) {
-                    // Username Exists!
-                    dbReturn['usernameExists'] = true;
-                }
-
-                User.find({ email: email })
-                    .then((emails) => {
-                        if (emails.length > 0) {
-                            // Email Exists
-                            dbReturn['emailExists'] = true;
-                        }
-
-                        let amoutOfErros = Object.keys(dbReturn).length;
-
-                        dbReturn['username'] = username;
-                        dbReturn['email'] = email;
-
-                        if (amoutOfErros > 0) {
-                            // Something is taken
-                            res.redirect(url.format({ pathname: "/signin", query: dbReturn }));
-                        }
-                        else {
-                            // U can sign in!
-                            bcryptjs.hash(password, saltRounds)
-                                .then((hashedPassword) => {
-                                    newUser['password'] = hashedPassword;
-                                    User.create(newUser, function (err, response) {
-                                        if (err) {
-                                            res.redirect('/signin')
-                                            return handleError("Problem when adding user! ", err);
-                                        }
-                                        console.log("User added!", response)
-                                        res.redirect('/login?accountCreated=true');
-                                    });
-                                })
-
-                        }
-                    })
 
 
-            })
-            .catch((error) => {
-                console.log("Something went wrong when searching for users!\n", error);
-            })
-
+    let newUser = {
+        username: username,
+        email: email,
+        password: password,
     }
+
+    User.find({ username: username })
+        .then((users) => {
+            if (Object.keys(users).length > 0) {
+                // Username Exists!
+                inputValidation['usernameExists'] = true;
+            }
+
+            User.find({ email: email })
+                .then((emails) => {
+                    if (Object.keys(emails).length > 0) {
+                        // Email Exists
+                        inputValidation['emailExists'] = true;
+                    }
+
+                    if (someErrorFound) {
+                        // Something is taken
+                        res.redirect(url.format({ pathname: "/signin", query: inputValidation }));
+                    }
+                    else {
+                        // U can sign in!
+                        bcryptjs.hash(password, saltRounds)
+                            .then((hashedPassword) => {
+                                newUser['password'] = hashedPassword;
+                                User.create(newUser, function (err, response) {
+                                    if (err) {
+                                        res.redirect('/signin')
+                                        return handleError("Problem when adding user! ", err);
+                                    }
+                                    console.log("User added!", response)
+                                    res.redirect('/login?accountCreated=true');
+                                });
+                            })
+
+                    }
+                })
+
+
+        })
+        .catch((error) => {
+            console.log("Something went wrong when searching for users!\n", error);
+        })
+
+
 })
 
 app.listen(PORT, () => {
