@@ -16,8 +16,10 @@ const passwordValidator = require('password-validator');
 // Your website: https://hostapptest.herokuapp.com/
 
 // TO DO 
-// Zrobiłeś walidacje rejestracji, dodaj zeby sprawdzalo czy w bazie są juz takie dane 
-// ^ Sprawdz czy podany email to taki email
+// COokies and session
+
+const SESSION = require("express-session");
+const MongoStore = require("connect-mongo");
 
 // Globals
 const PORT = process.env.PORT || 80;
@@ -27,6 +29,7 @@ const User = require('./models/user.js');
 
 // DB 
 var mongoose = require('mongoose');
+const { nextTick } = require('process');
 
 var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
 
@@ -40,6 +43,23 @@ db.once('open', function () {
     console.log("Connection with Mongo DB Successful!");
 });
 
+const sessionStore = MongoStore.create({
+    mongoUrl: mongoDB,
+    ttl: 20000
+})
+
+const sessionOptions = {
+    secret: "Some secret",
+    cookie: {
+        maxAge: 60 * 60 * 24 * 1000 * 7, // One week cookie
+        httpOnly: true,
+        signed: true
+    },
+    saveUninitialized: true,
+    resave: false,
+    store: sessionStore
+}
+
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views'));
@@ -47,21 +67,25 @@ app.set('views', path.join(__dirname, '/views'));
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 
-
+app.use(SESSION(sessionOptions));
 
 app.get('/', (req, res) => {
 
-    let queries = req.query;
-    console.log("Recived queries: ", queries);
+    console.log("Home / Recived queries: ", req.query);
 
-    res.render("index.ejs")
+    if (req.session.username) {
+        res.render("index.ejs", { loggedUser: req.session.username })
+    }
+    else {
+        res.render("index.ejs")
+    }
 })
 
 /* Login */
 app.get('/login', (req, res) => {
     let queries = req.query;
 
-    console.log("Recived queries: ", queries);
+    console.log("Login / Recived queries: ", queries);
 
     res.render("login.ejs", { queries: queries });
 
@@ -88,10 +112,13 @@ app.post('/login', (req, res) => {
                     }
                     if (response) {
                         // Password matches (He can login now)
-                        res.redirect(url.format({ pathname: "/", query: { isValid: true } }));
+                        req.session.username = username;
+
+                        res.redirect(url.format({ pathname: "/" }));
                     } else {
                         // Password not match
-                        possibleErrors['passwordOk'] = false
+
+                        possibleErrors['passwordOk'] = false;
                         res.redirect(url.format({ pathname: "/login", query: possibleErrors }));
                     }
                 });
@@ -102,6 +129,17 @@ app.post('/login', (req, res) => {
                 res.redirect(url.format({ pathname: "/login", query: possibleErrors }));
             }
         })
+})
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.log("Something went wrong with session destroy!", err)
+        }
+
+        res.clearCookie("connect.sid");
+        res.redirect("/");
+    })
 })
 
 

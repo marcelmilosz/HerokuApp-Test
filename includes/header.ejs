@@ -74,9 +74,8 @@
 
                     <div class="navbar-end">
                         <div class="navbar-item has-dropdown is-hoverable nav-dropdown">
-                            <a class="navbar-link is-arrowless">
-                                User
-                            </a>
+                            <% if (typeof(loggedUser) !== 'undefined') { %>
+                            <a class="navbar-link is-arrowless"> <%= loggedUser %> </a>
 
                             <div class="navbar-dropdown">
                                 <a class="navbar-item">
@@ -86,21 +85,20 @@
                                     <i class="fa-solid fa-moon"></i> Toggle Dark Mode
                                 </a>
                                 <a class="navbar-item">
-                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
-                                </a>
-                                <a class="navbar-item font-red">
                                     <i class="fa-solid fa-bug"></i> Report an issue
                                 </a>
+                                <a class="navbar-item  font-red" href="/logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+                                </a>
                             </div>
+                            <% } %>
                         </div>
                         <div class="navbar-item">
                             <div class="buttons">
-                                <a class="button signUpBtn" href="/signin">
-                                    <strong>Sign up</strong>
-                                </a>
-                                <a href="/login" class="button loginBtn">
-                                    Log in
-                                </a>
+                                <% if (typeof(loggedUser) === 'undefined') { %>
+                                <a class="button signUpBtn" href="/signin"> <strong>Sign up</strong> </a>
+                                <a href="/login" class="button loginBtn"> Log in </a>
+                                <% } %>
                             </div>
                         </div>
                     </div>
