@@ -75,10 +75,13 @@
                     <div class="navbar-end">
                         <div class="navbar-item has-dropdown is-hoverable nav-dropdown">
                             <% if (typeof(loggedUser) !== 'undefined') { %>
-                            <a class="navbar-link is-arrowless"> <%= loggedUser %> </a>
+                            <a class="navbar-link is-arrowless">
+                                <img src="images/icons/laugh.png" class="navbar-user-avatar">
+                                <span class="navbar-user-text"><%= loggedUser %></span>
+                            </a>
 
                             <div class="navbar-dropdown">
-                                <a class="navbar-item">
+                                <a class="navbar-item" href="/settings">
                                     <i class="fa-solid fa-gear"></i> Settings
                                 </a>
                                 <a class="navbar-item">

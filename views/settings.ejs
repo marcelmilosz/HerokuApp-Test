@@ -1,0 +1,24 @@
+<%- include("../includes/header.ejs") %>
+
+
+
+<section class="section">
+    <div class="container is-max-desktop index-container">
+        <h1 class="text-title">
+            Let's do some changes!
+        </h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop index-container">
+        <form action="/settings/uploadUserImage" enctype="multipart/form-data" method="POST">
+            <p> Upload profile image </p>
+            <input type="file" name="userProfileImage">
+            <button type="submit"> Upload Image! </button>
+        </form>
+
+    </div>
+</section>
+
+<%- include("../includes/footer.ejs") %>

@@ -16,7 +16,23 @@ const passwordValidator = require('password-validator');
 // Your website: https://hostapptest.herokuapp.com/
 
 // TO DO 
-// COokies and session
+
+// Images
+const multer = require("multer");
+
+const UserImage = require('./models/userImage.js'); // User profile image
+const imageMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+
+const Storage = multer.diskStorage({
+    destination: './public/images/usersAvatar',
+    filename: (req, file, cb) => {
+        cb(null, file.originalname)
+    }
+});
+
+const uploadUserAvatar = multer({
+    storage: Storage
+}).single('userProfileImage')
 
 const SESSION = require("express-session");
 const MongoStore = require("connect-mongo");
@@ -29,7 +45,6 @@ const User = require('./models/user.js');
 
 // DB 
 var mongoose = require('mongoose');
-const { nextTick } = require('process');
 
 var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
 
@@ -79,6 +94,61 @@ app.get('/', (req, res) => {
     else {
         res.render("index.ejs")
     }
+})
+
+/* Settings */
+app.get('/settings', (req, res) => {
+
+    // Getting Profile Image
+
+    if (req.session.username) {
+        res.render("settings.ejs", { loggedUser: req.session.username })
+    }
+    else {
+        res.redirect('/');
+    }
+})
+
+// Uploading users avatar image
+app.post('/settings/uploadUserImage', (req, res) => {
+
+    uploadUserAvatar(req, res, (err) => {
+        if (err) {
+            console.log("Some error when uploading an avatar image: ", err)
+        }
+        else {
+            console.log(req.file);
+            if (imageMimeTypes.includes(req.file.mimetype)) {
+                // If image is PNG JPEG OR GIF
+                const newImage = new UserImage({
+                    imageOwner: req.session.username,
+                    fileName: req.file.originalname,
+                    imageBuffer: {
+                        data: req.file.filename,
+                        contentType: req.file.mimetype
+                    },
+                    imageMime: req.file.mimetype,
+                    imageSize: req.file.size,
+                    imagePath: req.file.path
+                })
+
+
+                console.log(newImage)
+                newImage.save()
+                    .then(() => {
+                        console.log("Successfully uploaded an image!")
+                    })
+                    .catch((err) => {
+                        console.log("Error when uploading an avatar image!\n", err)
+                    })
+
+            } else {
+                // Image has wrong extenstion
+                console.log("Image has wrong extenstion!", req.file.mimetype);
+            }
+
+        }
+    })
 })
 
 /* Login */
@@ -132,14 +202,21 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.log("Something went wrong with session destroy!", err)
-        }
 
-        res.clearCookie("connect.sid");
+    // If someone was actually logged in
+    if (req.session.username) {
+        req.session.destroy((err) => {
+            if (err) {
+                console.log("Something went wrong with session destroy!", err)
+            }
+
+            res.clearCookie("connect.sid");
+            res.redirect("/");
+        })
+    } else {
         res.redirect("/");
-    })
+    }
+
 })
 
 

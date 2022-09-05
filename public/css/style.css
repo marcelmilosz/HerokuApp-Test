@@ -134,6 +134,17 @@ body {
     transform: scale(1.01);
 }
 
+.navbar-user-text {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.navbar-user-avatar {
+    margin-right: 6px;
+    max-width: 24px;
+    max-height: 24px;
+}
+
 /* Views - Index */
 .index-container {
     background-color: transparent;
