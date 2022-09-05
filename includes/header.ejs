@@ -71,12 +71,15 @@
                             Add Post
                         </a>
                     </div>
-
                     <div class="navbar-end">
                         <div class="navbar-item has-dropdown is-hoverable nav-dropdown">
                             <% if (typeof(loggedUser) !== 'undefined') { %>
                             <a class="navbar-link is-arrowless">
+                                <% if (typeof(userAvatarUrl) !== 'undefined') { %>
+                                <img src="<%= userAvatarUrl %>" class="navbar-user-avatar">
+                                <% } else { %>
                                 <img src="images/icons/laugh.png" class="navbar-user-avatar">
+                                <% } %>
                                 <span class="navbar-user-text"><%= loggedUser %></span>
                             </a>
 

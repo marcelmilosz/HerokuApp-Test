@@ -1,7 +1,5 @@
 <%- include("../includes/header.ejs") %>
 
-
-
 <section class="section">
     <div class="container is-max-desktop index-container">
         <h1 class="text-title">
@@ -12,9 +10,9 @@
 
 <section class="section">
     <div class="container is-max-desktop index-container">
-        <form action="/settings/uploadUserImage" enctype="multipart/form-data" method="POST">
+        <form method="POST" action="/settings/uploadAvatarImage" enctype="multipart/form-data">
             <p> Upload profile image </p>
-            <input type="file" name="userProfileImage">
+            <input name="avatarImage" type="file" accept="image/*">
             <button type="submit"> Upload Image! </button>
         </form>
 

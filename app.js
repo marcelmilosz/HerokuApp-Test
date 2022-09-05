@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const aws = require("aws-sdk");
 
 const ejs = require('ejs');
 const path = require('path');
@@ -16,23 +17,19 @@ const passwordValidator = require('password-validator');
 // Your website: https://hostapptest.herokuapp.com/
 
 // TO DO 
+// Zeby sprawdzalo czy image jest z dobrym ext 
+// Jezeli user ma juz image to zamiast dodawac nowe zmien obecne i usun z aws ten record
 
 // Images
-const multer = require("multer");
-
+const fileupload = require("express-fileupload");
 const UserImage = require('./models/userImage.js'); // User profile image
 const imageMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
-const Storage = multer.diskStorage({
-    destination: './public/images/usersAvatar',
-    filename: (req, file, cb) => {
-        cb(null, file.originalname)
-    }
-});
+const region = "us-east-1";
+const bucketName = "direct-user-avatar-upload";
+const accessKeyId = require('./secrets').secretS3.accessKey;
+const secretAccessKey = require('./secrets').secretS3.secretAccessKey;
 
-const uploadUserAvatar = multer({
-    storage: Storage
-}).single('userProfileImage')
 
 const SESSION = require("express-session");
 const MongoStore = require("connect-mongo");
@@ -45,12 +42,9 @@ const User = require('./models/user.js');
 
 // DB 
 var mongoose = require('mongoose');
-
+const { get } = require('http');
 var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
-
 mongoose.connect(mongoDB);
-
-// // get reference to database
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -83,18 +77,37 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(SESSION(sessionOptions));
+app.use(fileupload());
 
-app.get('/', (req, res) => {
+let userAvatarUrl;
 
-    console.log("Home / Recived queries: ", req.query);
+app.use(async (req, res, next) => {
 
     if (req.session.username) {
-        res.render("index.ejs", { loggedUser: req.session.username })
+        userAvatarUrl = await getUserUrlImageProfile(req.session.username);
+    }
+
+    next();
+});
+
+app.get('/', async (req, res) => {
+
+    if (req.session.username) {
+
+        res.render("index.ejs", { loggedUser: req.session.username, userAvatarUrl: userAvatarUrl })
     }
     else {
         res.render("index.ejs")
     }
 })
+
+async function getUserUrlImageProfile(username) {
+    console.log("looking for: ", username);
+
+    const userAvatarUrl = await UserImage.findOne({ imageOwner: username }).exec();
+    return userAvatarUrl.imagePath
+
+}
 
 /* Settings */
 app.get('/settings', (req, res) => {
@@ -102,15 +115,89 @@ app.get('/settings', (req, res) => {
     // Getting Profile Image
 
     if (req.session.username) {
-        res.render("settings.ejs", { loggedUser: req.session.username })
+        res.render("settings.ejs", { loggedUser: req.session.username, userAvatarUrl: userAvatarUrl })
     }
     else {
         res.redirect('/');
     }
 })
 
+const s3 = new aws.S3({
+    region,
+    accessKeyId,
+    secretAccessKey,
+    signatureVersion: 'v4'
+})
+
+// Generates URL to then be send to aws 
+async function generateUploadURL(filename) {
+    const imageName = filename;
+
+    const params = ({
+        Bucket: bucketName,
+        Key: imageName,
+        Expires: 60
+    })
+
+    const uploadURL = await s3.getSignedUrlPromise('putObject', params)
+    return uploadURL
+}
+
+// Sends file to aws 
+async function sendImageToAws(fileBody, filename) {
+    await s3.putObject({
+        Body: fileBody,
+        Bucket: bucketName,
+        Key: filename
+    }).promise()
+}
+
+// Gets image , generates url and sends it to AWS
+app.post('/settings/uploadAvatarImage', async (req, res) => {
+
+    try {
+        const file = req.files;
+        const fileName = Date.now() + "--" + file["avatarImage"].name;
+        const fileBody = file["avatarImage"].data;
+
+        const url = await generateUploadURL(fileName);
+
+        await sendImageToAws(fileBody, fileName);
+
+        const actualUrl = "https://direct-user-avatar-upload.s3.amazonaws.com/" + fileName;
+
+        // Here we add all info about our image to DB ! (we have URL rdy!)
+        const newAvatarImage = new UserImage({
+            imageOwner: req.session.username,
+            fileName: fileName,
+            imageMime: file["avatarImage"].mimetype,
+            imageSize: file["avatarImage"].size,
+            imagePath: actualUrl
+        });
+
+        newAvatarImage.save();
+        console.log("Image added!")
+
+        res.redirect('/settings');
+
+    }
+    catch (err) {
+        console.log("Something went wrong when uploading an image!", err);
+
+        res.redirect('/settings', { error: "Something is wrong with image" });
+    }
+
+
+
+
+
+
+
+})
+
 // Uploading users avatar image
 app.post('/settings/uploadUserImage', (req, res) => {
+
 
     uploadUserAvatar(req, res, (err) => {
         if (err) {
@@ -149,7 +236,10 @@ app.post('/settings/uploadUserImage', (req, res) => {
 
         }
     })
-})
+
+    res.redirect('/')
+
+});
 
 /* Login */
 app.get('/login', (req, res) => {

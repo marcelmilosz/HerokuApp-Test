@@ -17,10 +17,6 @@ const userImageSchema = new Schema({
         type: String,
         required: true
     },
-    imageBuffer: {
-        data: Buffer,
-        contentType: String
-    },
     imageMime: {
         type: String,
         required: true
