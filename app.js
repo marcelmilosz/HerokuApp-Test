@@ -27,8 +27,8 @@ const imageMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
 const region = "us-east-1";
 const bucketName = "direct-user-avatar-upload";
-const accessKeyId = require('./secrets').secretS3.accessKey;
-const secretAccessKey = require('./secrets').secretS3.secretAccessKey;
+const accessKeyId = process.env.AWS_ID || require('./secrets').secretS3.accessKey;
+const secretAccessKey = process.env.AWS_KEY || require('./secrets').secretS3.secretAccessKey;
 
 
 const SESSION = require("express-session");
@@ -42,7 +42,6 @@ const User = require('./models/user.js');
 
 // DB 
 var mongoose = require('mongoose');
-const { get } = require('http');
 var mongoDB = process.env.MONGO_URI || require('./secrets').secretDB.uri;
 mongoose.connect(mongoDB);
 var db = mongoose.connection;
