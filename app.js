@@ -19,6 +19,9 @@ const passwordValidator = require('password-validator');
 // TO DO 
 // Zeby sprawdzalo czy image jest z dobrym ext 
 // Jezeli user ma juz image to zamiast dodawac nowe zmien obecne i usun z aws ten record
+// Wprowadź domyślny user avatar
+// Sprawdzaj czy user Avatar nie jest za duzy!
+// Ogarnij ładną stronę settings
 
 // Images
 const fileupload = require("express-fileupload");
@@ -100,16 +103,16 @@ app.get('/', async (req, res) => {
     }
 })
 
+// Returns user avatar image (URL) or sets default image
 async function getUserUrlImageProfile(username) {
     console.log("looking for: ", username);
 
     const userAvatarUrl = await UserImage.findOne({ imageOwner: username }).exec();
     if (userAvatarUrl !== null) {
-        console.log("Image found")
         return userAvatarUrl.imagePath
     }
     else {
-        console.log("no image!")
+        // Basic image for all new users!
         return "images/icons/laugh.png"
     }
 

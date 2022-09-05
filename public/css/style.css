@@ -431,6 +431,108 @@ body {
     border-radius: 4px;
 }
 
+/* Settings */
+.settings-user-image-container {
+    width: 100%;
+    min-height: 200px;
+
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    padding: 24px;
+
+    gap: 48px;
+
+    border-top: 2px solid var(--BlueGray);
+}
+
+.settings-user-image-box {
+    width: 200px;
+    min-height: 200px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    padding: 12px;
+    gap: 12px;
+
+}
+
+.settings-user-image-info-box {
+    width: 600px;
+    min-height: 200px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding: 12px;
+    gap: 12px;
+}
+
+.settings-user-image-box img {
+    background-color: var(--BgBlackLighter);
+    padding: 8px;
+    border-radius: 6px;
+    width: 256px;
+    max-height: 256px;
+}
+
+.settings-normal-text {
+    color: var(--fontWhiteBig);
+
+    font-size: 26;
+    font-weight: 600;
+
+    padding: 24px;
+
+    background-color: var(--BgBlackLighter);
+}
+
+.settings-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--fontWhiteNormal);
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.settings-button {
+    width: 176px;
+
+    display: block;
+
+    background-color: var(--BlueGray);
+    color: var(--fontWhiteBig);
+
+    font-size: 16px;
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 500;
+
+    padding: 8px;
+
+    border: 0;
+    border-radius: 4px;
+
+    text-align: center;
+
+    transition: all 200ms;
+
+    margin-bottom: 4px;
+}
+
+.settings-button:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
 /* Footer */
 .footer-container {
     background-color: transparent;
