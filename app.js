@@ -104,7 +104,16 @@ async function getUserUrlImageProfile(username) {
     console.log("looking for: ", username);
 
     const userAvatarUrl = await UserImage.findOne({ imageOwner: username }).exec();
-    return userAvatarUrl.imagePath
+    if (userAvatarUrl !== null) {
+        console.log("Image found")
+        return userAvatarUrl.imagePath
+    }
+    else {
+        console.log("no image!")
+        return "images/icons/laugh.png"
+    }
+
+
 
 }
 
