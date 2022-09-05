@@ -60,6 +60,14 @@
     color: var(--BlueLighter);
 }
 
+.centerAll {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
 .fullPage-container {
     width: 100%;
     min-height: 100%;

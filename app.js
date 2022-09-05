@@ -83,6 +83,7 @@ app.use(fileupload());
 
 let userAvatarUrl;
 
+// For every page change 
 app.use(async (req, res, next) => {
 
     if (req.session.username) {
@@ -124,9 +125,8 @@ async function getUserUrlImageProfile(username) {
 app.get('/settings', (req, res) => {
 
     // Getting Profile Image
-
     if (req.session.username) {
-        res.render("settings.ejs", { loggedUser: req.session.username, userAvatarUrl: userAvatarUrl })
+        res.render("settings.ejs", { loggedUser: req.session.username, userAvatarUrl: userAvatarUrl, errors: req.query })
     }
     else {
         res.redirect('/');
@@ -163,7 +163,7 @@ async function sendImageToAws(fileBody, filename) {
     }).promise()
 }
 
-// Gets image , generates url and sends it to AWS
+// Gets image , generates url and sends it to AWS and adds / edits on mongo
 app.post('/settings/uploadAvatarImage', async (req, res) => {
 
     try {
@@ -171,86 +171,73 @@ app.post('/settings/uploadAvatarImage', async (req, res) => {
         const fileName = Date.now() + "--" + file["avatarImage"].name;
         const fileBody = file["avatarImage"].data;
 
-        const url = await generateUploadURL(fileName);
+        const urlx = await generateUploadURL(fileName);
 
-        await sendImageToAws(fileBody, fileName);
+        let Errors = {};
+        let errorHappened = false;
 
-        const actualUrl = "https://direct-user-avatar-upload.s3.amazonaws.com/" + fileName;
+        // Image has to be lower than 1,1MB 
+        if (file["avatarImage"].size > 1275347) {
+            Errors["imageToBig"] = true;
+            errorHappened = true;
+        }
 
-        // Here we add all info about our image to DB ! (we have URL rdy!)
-        const newAvatarImage = new UserImage({
-            imageOwner: req.session.username,
-            fileName: fileName,
-            imageMime: file["avatarImage"].mimetype,
-            imageSize: file["avatarImage"].size,
-            imagePath: actualUrl
-        });
+        if (!imageMimeTypes.includes(file["avatarImage"].mimetype)) {
+            Errors["wrongExtention"] = true;
+            errorHappened = true;
+        }
 
-        newAvatarImage.save();
-        console.log("Image added!")
+        if (errorHappened == false) {
+            await sendImageToAws(fileBody, fileName);
 
-        res.redirect('/settings');
+            const actualUrl = "https://direct-user-avatar-upload.s3.amazonaws.com/" + fileName;
 
+            // Checking if user have set image before 
+
+            UserImage.findOne({ imageOwner: req.session.username })
+                .then((response) => {
+                    if (response !== null) {
+                        UserImage.findOneAndUpdate({ imageOwner: req.session.username }, { $set: { imagePath: actualUrl } })
+                            .then((response2) => {
+                                console.log(response2);
+                                Errors["imageUpdated"] = true;
+                                console.log("Image Updated!");
+                                res.redirect(url.format({ pathname: "/settings", query: Errors }));
+                            })
+                            .catch((err) => {
+                                console.log("Error when updating image!", err)
+                                res.redirect(url.format({ pathname: "/settings", query: Errors }));
+                            })
+                    }
+                    else {
+                        // Here we add all info about our image to DB ! (we have URL rdy!)
+                        const newAvatarImage = new UserImage({
+                            imageOwner: req.session.username,
+                            fileName: file["avatarImage"].name,
+                            imageMime: file["avatarImage"].mimetype,
+                            imageSize: file["avatarImage"].size,
+                            imagePath: actualUrl
+                        });
+
+                        newAvatarImage.save();
+                        Errors["newImageAdded"] = true;
+                        console.log("New Image added!")
+                        res.redirect(url.format({ pathname: "/settings", query: Errors }));
+                    }
+                })
+
+        }
+        else {
+            res.redirect(url.format({ pathname: "/settings", query: Errors }));
+        }
     }
     catch (err) {
         console.log("Something went wrong when uploading an image!", err);
 
-        res.redirect('/settings', { error: "Something is wrong with image" });
+        es.redirect(url.format({ pathname: "/settings", query: Errors }));
     }
 
-
-
-
-
-
-
 })
-
-// Uploading users avatar image
-app.post('/settings/uploadUserImage', (req, res) => {
-
-
-    uploadUserAvatar(req, res, (err) => {
-        if (err) {
-            console.log("Some error when uploading an avatar image: ", err)
-        }
-        else {
-            console.log(req.file);
-            if (imageMimeTypes.includes(req.file.mimetype)) {
-                // If image is PNG JPEG OR GIF
-                const newImage = new UserImage({
-                    imageOwner: req.session.username,
-                    fileName: req.file.originalname,
-                    imageBuffer: {
-                        data: req.file.filename,
-                        contentType: req.file.mimetype
-                    },
-                    imageMime: req.file.mimetype,
-                    imageSize: req.file.size,
-                    imagePath: req.file.path
-                })
-
-
-                console.log(newImage)
-                newImage.save()
-                    .then(() => {
-                        console.log("Successfully uploaded an image!")
-                    })
-                    .catch((err) => {
-                        console.log("Error when uploading an avatar image!\n", err)
-                    })
-
-            } else {
-                // Image has wrong extenstion
-                console.log("Image has wrong extenstion!", req.file.mimetype);
-            }
-
-        }
-    })
-
-    res.redirect('/')
-
-});
 
 /* Login */
 app.get('/login', (req, res) => {

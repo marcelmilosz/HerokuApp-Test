@@ -464,6 +464,20 @@ body {
 
 }
 
+.avatar-image-upload-error-text {
+    font-size: 12px;
+    color: var(--RedStrong);
+
+    font-weight: 300;
+}
+
+.avatar-image-upload-success-text {
+    font-size: 12px;
+    color: var(--GreenStronger);
+
+    font-weight: 300;
+}
+
 .settings-user-image-info-box {
     width: 600px;
     min-height: 200px;

@@ -27,6 +27,26 @@
                     <input style="display: none" id="file-upload" name="avatarImage" type="file" accept="image/*">
                     <button class="settings-button" type="submit"> Upload! </button>
                 </form>
+
+                <% if (typeof(errors) !== 'undefined') { %>
+
+                <% if (errors.imageToBig) { %>
+                <p class="avatar-image-upload-error-text"> - File too big! </p>
+                <% } %>
+
+                <% if (errors.wrongExtention) { %>
+                <p class="avatar-image-upload-error-text"> - Wrong extention! </p>
+                <% } %>
+
+                <% if (errors.newImageAdded) { %>
+                <p class="avatar-image-upload-success-text"> New image added! </p>
+                <% } %>
+
+                <% if (errors.imageUpdated) { %>
+                <p class="avatar-image-upload-success-text"> Image Updated! </p>
+                <% } %>
+
+                <% } %>
             </div>
 
             <!-- Image info here -->
